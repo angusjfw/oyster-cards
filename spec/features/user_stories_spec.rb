@@ -1,5 +1,6 @@
 require 'oystercard'
 require 'station'
+require 'journey'
 
 describe "User Stories" do
   let(:card) { Oystercard.new }
@@ -58,7 +59,7 @@ describe "User Stories" do
   it 'tapping out deducts a fare from the balance' do
     card.top_up! Oystercard::TRAVEL_BALANCE
     card.touch_in! station
-    expect {card.touch_out! station}.to change{card.balance}.by(-Oystercard::FARE)
+    expect {card.touch_out! station}.to change{card.balance}.by(-Journey::FARE)
   end
 
   #In order to pay for my journey
@@ -67,18 +68,19 @@ describe "User Stories" do
   it 'tapping in stores the entry station' do
     card.top_up! Oystercard::TRAVEL_BALANCE
     card.touch_in! station
-    expect(card.journey[:entry_station]).to eq station
+    expect(card.journey.entry).to eq station
   end
 
   #In order to know where I have been
   #As a customer
   #I want to see to all my previous trips
   it 'can see journey history' do
-    journey = {entry_station: station, exit_station: station2}
+    journey = Journey.new(station)
+    journey.exit_station = station2
     card.top_up! Oystercard::TRAVEL_BALANCE
     card.touch_in! station
     card.touch_out! station2
-    expect(card.history).to eq([journey])
+    expect(card.history[0].exit_station).to eq(journey.exit_station)
   end
 
   #In order to know how far I have travelled
@@ -93,6 +95,6 @@ describe "User Stories" do
   #I need a penalty charge deducted if I fail to touch in or out
   it 'deducts penalty fare if journey incompete' do
     card.top_up! Oystercard::TRAVEL_BALANCE
-    expect{card.touch_out!}.to change{card.balance}.by(-Oystercard::PENALTY_FARE)
+    expect{card.touch_out!(station)}.to change{card.balance}.by(-Journey::PENALTY_FARE)
   end
 end

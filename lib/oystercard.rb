@@ -1,13 +1,15 @@
+require 'journey'
+
 class Oystercard
   BALANCE_LIMIT = 90
   TRAVEL_BALANCE = 1
-  FARE = 2
+
   attr_reader :balance, :entry_station, :journey, :history
 
   def initialize
     @balance = 0
     @history = []
-    @journey = { entry_station: nil, exit_station: nil }
+    @journey = nil
   end
 
   def top_up! amount
@@ -18,18 +20,19 @@ class Oystercard
 
   def touch_in! station
     fail "Top up needed!" if under_limit?
-    journey[:entry_station] = station
+    @journey = Journey.new(station)
   end
 
   def touch_out! station
-    journey[:exit_station] = station
+    @journey = Journey.new(nil) if journey == nil
+    journey.exit_station = station
     history << journey
-    @journey = { entry_station: nil, exit_station: nil }
-    deduct!(FARE)
+    deduct!(journey.fare)
+    @journey = nil
   end
 
   def in_journey?
-    !!journey[:entry_station]
+    !!journey
   end
 
   private

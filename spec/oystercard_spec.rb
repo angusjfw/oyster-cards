@@ -62,7 +62,7 @@ describe Oystercard do
     it 'deducts fare from balance' do
       card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in! station
-      expect{card.touch_out! station}.to change{card.balance}.by (-Oystercard::FARE)
+      expect{card.touch_out! station}.to change{card.balance}.by (-Journey::FARE)
     end
 
     it 'sets the entry_station to nil' do
@@ -79,13 +79,14 @@ describe Oystercard do
     end
 
     it 'returns array of journeys taken' do
-      journey = {entry_station: station, exit_station: station2}
+      journey = Journey.new(station)
+      journey.exit_station = station2
       2.times {
-        card.top_up! Oystercard::FARE
+        card.top_up! Journey::FARE
         card.touch_in! station
         card.touch_out! station2
       }
-      expect(card.history).to eq([journey, journey])
-    end 
+      expect(card.history[1].exit_station).to eq(journey.exit_station)
+    end
   end
 end
