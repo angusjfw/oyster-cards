@@ -3,6 +3,7 @@ require "oystercard"
 describe Oystercard do
   subject(:card) { described_class.new }
   let(:station) { double :station }
+  let(:station2) { double :station2 }
 
   describe '#balance' do
     it "has a balance" do
@@ -46,7 +47,7 @@ describe Oystercard do
     it 'tapping in stores the entry station' do
       card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in! station
-      expect(card.entry_station).to eq station
+      expect(card.journey[:entry_station]).to eq station
     end
   end
 
@@ -54,21 +55,37 @@ describe Oystercard do
     it 'sets card state to not in use' do
       card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in! station
-      card.touch_out!
+      card.touch_out! station
       expect(card).to_not be_in_journey
     end
 
     it 'deducts fare from balance' do
       card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in! station
-      expect{card.touch_out!}.to change{card.balance}.by (-Oystercard::FARE)
+      expect{card.touch_out! station}.to change{card.balance}.by (-Oystercard::FARE)
     end
 
     it 'sets the entry_station to nil' do
       card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in! station
-      card.touch_out!
+      card.touch_out! station
       expect(card.entry_station).to eq nil
     end
+  end
+
+  describe '#history' do
+    it 'is an empty array by default' do
+      expect(card.history).to eq []
+    end
+
+    it 'returns array of journeys taken' do
+      journey = {entry_station: station, exit_station: station2}
+      2.times {
+        card.top_up! Oystercard::FARE
+        card.touch_in! station
+        card.touch_out! station2
+      }
+      expect(card.history).to eq([journey, journey])
+    end 
   end
 end
