@@ -3,8 +3,12 @@ require 'station'
 
 describe "User Stories" do
   let(:card) { Oystercard.new }
-  let(:station) { Station.new }
-  let(:station2) { Station.new }
+  station_name = "Aldgate"
+  zone = 1
+  station_name2 = "Euston"
+  zone2 = 2
+  let(:station) { Station.new(station_name, zone) }
+  let(:station2) { Station.new(station_name2, zone2) }
 
   # In order to use public transport
   # As a customer
@@ -77,5 +81,10 @@ describe "User Stories" do
     expect(card.history).to eq([journey])
   end
 
-
+  #In order to know how far I have travelled
+  #As a customer
+  #I want to know what zone a station is in
+  it 'station has a zone' do
+    expect(station.zone).to eq zone
+  end
 end
