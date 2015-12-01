@@ -39,7 +39,15 @@ describe "User Stories" do
   #As a customer
   #I need to touch in and out.
   it 'can touch in and touch out' do
+    card.top_up! Oystercard::TRAVEL_BALANCE
     card.touch_in!
     expect(card).to be_in_journey
+  end
+
+  #In order to pay for my journey
+  #As a customer
+  #I need to have the minimum amount (£1) for a single journey.
+  it 'must have at least £1 balance to touch in' do
+    expect{card.touch_in!}.to raise_error "Top up needed!"
   end
 end

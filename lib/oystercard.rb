@@ -1,5 +1,6 @@
 class Oystercard
   BALANCE_LIMIT = 90
+  TRAVEL_BALANCE = 1
   attr_reader :balance, :in_use
   alias_method :in_journey?, :in_use
 
@@ -18,15 +19,20 @@ class Oystercard
     @balance -= amount
   end
 
-  def over_limit? total
-    total > BALANCE_LIMIT
-  end
-
   def touch_in!
+    fail "Top up needed!" if under_limit?
     @in_use = true
   end
 
   def touch_out!
     @in_use = false
+  end
+
+  def over_limit? total
+    total > BALANCE_LIMIT
+  end
+
+  def under_limit?
+    balance < TRAVEL_BALANCE
   end
 end

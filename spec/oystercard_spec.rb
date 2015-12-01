@@ -41,13 +41,19 @@ describe Oystercard do
 
   describe '#touch_in!' do
     it 'tapping in sets card state to in use' do
+      card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in!
       expect(card).to be_in_journey
+    end
+
+    it 'must have at least £1 balance to touch in' do
+      expect{card.touch_in!}.to raise_error "Top up needed!"
     end
   end
 
   describe '#touch_out!' do
     it 'touching out sets card state to not in use' do
+      card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in!
       card.touch_out!
       expect(card).to_not be_in_journey
