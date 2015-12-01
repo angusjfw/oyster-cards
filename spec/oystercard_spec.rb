@@ -25,14 +25,6 @@ describe Oystercard do
     end
   end
 
-  describe '#deduct!' do
-    it 'can deduct money from card' do
-      card.top_up! 20
-      card.deduct! 10
-      expect(card.balance).to eq 10
-    end
-  end
-
   describe '#in_journey?' do
     it 'can check if in journey' do
       expect(card).to_not be_in_journey
@@ -40,7 +32,7 @@ describe Oystercard do
   end
 
   describe '#touch_in!' do
-    it 'tapping in sets card state to in use' do
+    it 'sets card state to in use' do
       card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in!
       expect(card).to be_in_journey
@@ -52,11 +44,17 @@ describe Oystercard do
   end
 
   describe '#touch_out!' do
-    it 'touching out sets card state to not in use' do
+    it 'sets card state to not in use' do
       card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in!
       card.touch_out!
       expect(card).to_not be_in_journey
+    end
+
+    it 'deducts fare from balance' do
+      card.top_up! Oystercard::TRAVEL_BALANCE
+      card.touch_in!
+      expect{card.touch_out!}.to change{card.balance}.by (-Oystercard::FARE)
     end
   end
 end
