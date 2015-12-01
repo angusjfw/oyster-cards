@@ -1,3 +1,5 @@
+require 'journey'
+
 describe Journey do
   let(:station) {double :station}
   subject(:journey) { described_class.new(station) }
