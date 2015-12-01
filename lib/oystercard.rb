@@ -9,10 +9,15 @@ class Oystercard
   def top_up! amount
     total = balance + amount
     fail "Cannot exceed balance of #{BALANCE_LIMIT}!" if over_limit? total
-    @balance = total  
+    @balance = total
   end
 
   def over_limit? total
     total > BALANCE_LIMIT
   end
+
+  def deduct! amount
+    @balance -= amount
+  end
+
 end

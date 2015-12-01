@@ -1,3 +1,5 @@
+require 'oystercard'
+
 describe "User Stories" do
   let(:card) { Oystercard.new }
 
@@ -23,4 +25,14 @@ describe "User Stories" do
     card.top_up! Oystercard::BALANCE_LIMIT
     expect{card.top_up! 1}.to raise_error 'Cannot exceed balance of 90!'
   end
+
+  #In order to pay for my journey
+  #As a customer
+  #I need my fare deducted from my card
+  it 'can deduct money from card' do
+    card.top_up! 20
+    card.deduct! 10
+    expect(card.balance).to eq 10
+  end
+
 end
