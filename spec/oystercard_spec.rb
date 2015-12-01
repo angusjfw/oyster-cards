@@ -2,6 +2,7 @@ require "oystercard"
 
 describe Oystercard do
   subject(:card) { described_class.new }
+  let(:station) { double :station }
 
   describe '#balance' do
     it "has a balance" do
@@ -34,27 +35,40 @@ describe Oystercard do
   describe '#touch_in!' do
     it 'sets card state to in use' do
       card.top_up! Oystercard::TRAVEL_BALANCE
-      card.touch_in!
+      card.touch_in! station
       expect(card).to be_in_journey
     end
 
     it 'must have at least £1 balance to touch in' do
-      expect{card.touch_in!}.to raise_error "Top up needed!"
+      expect{card.touch_in! station }.to raise_error "Top up needed!"
+    end
+
+    it 'tapping in stores the entry station' do
+      card.top_up! Oystercard::TRAVEL_BALANCE
+      card.touch_in! station
+      expect(card.entry_station).to eq station
     end
   end
 
   describe '#touch_out!' do
     it 'sets card state to not in use' do
       card.top_up! Oystercard::TRAVEL_BALANCE
-      card.touch_in!
+      card.touch_in! station
       card.touch_out!
       expect(card).to_not be_in_journey
     end
 
     it 'deducts fare from balance' do
       card.top_up! Oystercard::TRAVEL_BALANCE
-      card.touch_in!
+      card.touch_in! station
       expect{card.touch_out!}.to change{card.balance}.by (-Oystercard::FARE)
+    end
+
+    it 'sets the entry_station to nil' do
+      card.top_up! Oystercard::TRAVEL_BALANCE
+      card.touch_in! station
+      card.touch_out!
+      expect(card.entry_station).to eq nil
     end
   end
 end

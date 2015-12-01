@@ -2,12 +2,10 @@ class Oystercard
   BALANCE_LIMIT = 90
   TRAVEL_BALANCE = 1
   FARE = 2
-  attr_reader :balance, :in_use
-  alias_method :in_journey?, :in_use
+  attr_reader :balance, :entry_station
 
   def initialize
     @balance = 0
-    @in_use = false
   end
 
   def top_up! amount
@@ -16,13 +14,13 @@ class Oystercard
     @balance = total
   end
 
-  def touch_in!
+  def touch_in! station
     fail "Top up needed!" if under_limit?
-    @in_use = true
+    @entry_station = station
   end
 
   def touch_out!
-    @in_use = false
+    @entry_station = nil
     deduct!(FARE)
   end
 
@@ -34,6 +32,9 @@ class Oystercard
     balance < TRAVEL_BALANCE
   end
 
+  def in_journey?
+    !!entry_station
+  end
   private
 
   def deduct! amount

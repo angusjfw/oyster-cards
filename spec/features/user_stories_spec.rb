@@ -1,7 +1,9 @@
 require 'oystercard'
+require 'station'
 
 describe "User Stories" do
   let(:card) { Oystercard.new }
+  let(:station) { Station.new }
 
   # In order to use public transport
   # As a customer
@@ -31,7 +33,7 @@ describe "User Stories" do
   #I need to touch in and out.
   it 'can touch in and touch out' do
     card.top_up! Oystercard::TRAVEL_BALANCE
-    card.touch_in!
+    card.touch_in! station
     expect(card).to be_in_journey
   end
 
@@ -39,7 +41,7 @@ describe "User Stories" do
   #As a customer
   #I need to have the minimum amount (£1) for a single journey.
   it 'must have at least £1 balance to touch in' do
-    expect{card.touch_in!}.to raise_error "Top up needed!"
+    expect{card.touch_in! station}.to raise_error "Top up needed!"
   end
 
   #In order to pay for my journey
@@ -50,7 +52,18 @@ describe "User Stories" do
   #When my journey is complete, I need the correct amount deducted from my card
   it 'tapping out deducts a fare from the balance' do
     card.top_up! Oystercard::TRAVEL_BALANCE
-    card.touch_in!
+    card.touch_in! station
     expect {card.touch_out!}.to change{card.balance}.by(-Oystercard::FARE)
   end
+
+  #In order to pay for my journey
+  #As a customer
+  #I need to know where I've travelled from
+  it 'tapping in stores the entry station' do
+    card.top_up! Oystercard::TRAVEL_BALANCE
+    card.touch_in! station
+    expect(card.entry_station).to eq station
+  end
+
+
 end
