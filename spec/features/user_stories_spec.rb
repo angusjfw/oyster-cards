@@ -15,4 +15,12 @@ describe "User Stories" do
     card.top_up! 10
     expect(card.balance).to eq 10
   end
+
+  #In order to protect my money from theft or loss
+  #As a customer
+  #I want a maximum limit (of £90) on my card
+  it 'card has a maximum balance of 90' do
+    card.top_up! Oystercard::BALANCE_LIMIT
+    expect{card.top_up! 1}.to raise_error 'Cannot exceed balance of 90!'
+  end
 end
