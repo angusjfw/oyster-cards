@@ -6,8 +6,8 @@ class Oystercard
 
   def initialize
     @balance = 0
-    @journey = { entry_station: nil, exit_station: nil }
     @history = []
+    @journey = { entry_station: nil, exit_station: nil }
   end
 
   def top_up! amount
@@ -28,14 +28,6 @@ class Oystercard
     deduct!(FARE)
   end
 
-  def over_limit? total
-    total > BALANCE_LIMIT
-  end
-
-  def under_limit?
-    balance < TRAVEL_BALANCE
-  end
-
   def in_journey?
     !!journey[:entry_station]
   end
@@ -44,5 +36,13 @@ class Oystercard
 
   def deduct! amount
     @balance -= amount
+  end
+
+  def over_limit? total
+    total > BALANCE_LIMIT
+  end
+
+  def under_limit?
+    balance < TRAVEL_BALANCE
   end
 end
