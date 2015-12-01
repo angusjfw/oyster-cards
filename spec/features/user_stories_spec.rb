@@ -87,4 +87,12 @@ describe "User Stories" do
   it 'station has a zone' do
     expect(station.zone).to eq zone
   end
+
+  #In order to be charged correctly
+  #As a customer
+  #I need a penalty charge deducted if I fail to touch in or out
+  it 'deducts penalty fare if journey incompete' do
+    card.top_up! Oystercard::TRAVEL_BALANCE
+    expect{card.touch_out!}.to change{card.balance}.by(-Oystercard::PENALTY_FARE)
+  end
 end

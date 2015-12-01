@@ -47,7 +47,7 @@ describe Oystercard do
     it 'tapping in stores the entry station' do
       card.top_up! Oystercard::TRAVEL_BALANCE
       card.touch_in! station
-      expect(card.journey[:entry_station]).to eq station
+      expect(card.journey.entry).to eq station
     end
   end
 
