@@ -31,6 +31,26 @@ describe Oystercard do
       card.deduct! 10
       expect(card.balance).to eq 10
     end
+  end
 
+  describe '#in_journey?' do
+    it 'can check if in journey' do
+      expect(card).to_not be_in_journey
+    end
+  end
+
+  describe '#touch_in!' do
+    it 'tapping in sets card state to in use' do
+      card.touch_in!
+      expect(card).to be_in_journey
+    end
+  end
+
+  describe '#touch_out!' do
+    it 'touching out sets card state to not in use' do
+      card.touch_in!
+      card.touch_out!
+      expect(card).to_not be_in_journey
+    end
   end
 end

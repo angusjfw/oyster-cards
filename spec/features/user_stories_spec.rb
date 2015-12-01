@@ -35,4 +35,11 @@ describe "User Stories" do
     expect(card.balance).to eq 10
   end
 
+  #In order to get through the barriers.
+  #As a customer
+  #I need to touch in and out.
+  it 'can touch in and touch out' do
+    card.touch_in!
+    expect(card).to be_in_journey
+  end
 end
